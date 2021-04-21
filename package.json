@@ -1,0 +1,48 @@
+{
+  "name": "one",
+  "version": "1.0.0",
+  "description": "One UI, react mobx 领域驱动模板",
+  "scripts": {
+    "start": "webpack serve --config ./webpack.dev.js"
+  },
+  "keywords": [
+    "react",
+    "mobx",
+    "DDD"
+  ],
+  "author": "one",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.13.15",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/plugin-proposal-decorators": "^7.13.15",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "@types/react-router-dom": "^5.1.7",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.1",
+    "html-webpack-plugin": "^5.3.1",
+    "less": "^4.1.1",
+    "less-loader": "^8.1.1",
+    "style-loader": "^2.0.0",
+    "typescript": "^4.2.4",
+    "webpack": "^5.33.2",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-merge": "^5.7.3"
+  },
+  "dependencies": {
+    "@formily/antd": "^1.3.15",
+    "@formily/antd-components": "^1.3.15",
+    "antd": "^4.15.1",
+    "axios": "^0.21.1",
+    "mobx": "^6.2.0",
+    "mobx-react-lite": "^3.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.2.3"
+  }
+}

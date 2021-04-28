@@ -2,12 +2,12 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { message } from 'antd'
 
 interface Config extends AxiosRequestConfig {
-  note?: string
+  note?: string // 操作成功后的弹出消息
 }
 
-interface Success {
+export interface Success<T> {
   success: true
-  data: any
+  data: T
 }
 
 interface Failure {
@@ -16,9 +16,11 @@ interface Failure {
   code: number
 }
 
-type Response = Success | Failure
+export type Response<T> = Success<T> | Failure
 
-const http = axios.create()
+const http = axios.create({
+  baseURL: 'https://www.fastmock.site/mock/003b0c1c8962b5b9a59af64f42a053dd/api',
+})
 
 http.interceptors.response.use(
   res => {
@@ -37,8 +39,8 @@ http.interceptors.response.use(
 )
 
 const request = {
-  async get(url: string, config: Config = {}) {
-    const { data } = await http.get<Response>(url, config)
+  async get<T>(url: string, config: Config = {}) {
+    const { data } = await http.get<Response<T>>(url, config)
 
     if (data.success === true) {
       if (config && config.note) {
@@ -50,8 +52,8 @@ const request = {
       return Promise.reject(data.code)
     }
   },
-  async post(url: string, body?: object, config?: Config) {
-    const { data } = await http.post<Response>(url, body, config)
+  async post<T>(url: string, body?: object, config?: Config) {
+    const { data } = await http.post<Response<T>>(url, body, config)
 
     if (data.success === true) {
       if (config && config.note) {
@@ -63,6 +65,11 @@ const request = {
       return Promise.reject(data.code)
     }
   },
+}
+
+export interface ResponseList<T> {
+  list: Array<T>
+  total: number
 }
 
 export default request

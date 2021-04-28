@@ -4,6 +4,7 @@ import { ConfigProvider } from 'antd'
 import { render } from 'react-dom'
 import zhCN from 'antd/es/locale/zh_CN'
 import 'antd/dist/antd.css'
+import './global.less'
 
 import App from './app'
 

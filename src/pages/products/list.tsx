@@ -1,26 +1,42 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import { Input, NumberPicker } from '@formily/antd-components'
-import { Table, PageHeader, Card, Button } from 'antd'
+import { Input, Select } from '@formily/antd-components'
+import { Table, PageHeader, Card, Button, Space } from 'antd'
 
-import productStore, { Product } from '@/store/products'
-import { ModalForm, Search } from '@/components'
+import store, { Product } from '@/store/product'
+import { ModalForm, Search, Confirm } from '@/components'
 
 const List = observer(() => {
-  const { loading, list } = productStore
+  useEffect(store.fetchList, [])
 
-  const save = () => {
+  const { loading, list, search, pagination } = store
+
+  const save = (it?: Product) => {
     ModalForm({
-      title: '新增商品',
-      components: { Input },
+      title: it ? '编辑商品' : '新增商品',
+      defaultValue: it,
+      components: { Input, Select, Text: Input.TextArea },
       schema: {
         name: {
           type: 'string',
           title: '商品名称',
           'x-component': 'Input',
         },
+        type: {
+          type: 'string',
+          title: '商品类型',
+          'x-component': 'Select',
+          enum: Product.options.type,
+          default: 1,
+        },
+        description: {
+          type: 'string',
+          title: '商品描述',
+          'x-component': 'Text',
+        },
       },
-      onSubmit: () => Promise.resolve(),
+      onSubmit: store.save,
     })
   }
 
@@ -30,13 +46,37 @@ const List = observer(() => {
       dataIndex: 'name',
     },
     {
+      title: '商品图片',
+      dataIndex: 'img',
+      render: (val: string) => <img src={val} />,
+    },
+    {
+      title: '商品类型',
+      dataIndex: 'typeName',
+    },
+    {
       title: '状态',
       dataIndex: 'statusName',
+    },
+    {
+      title: '商品描述',
+      dataIndex: 'description',
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (it: Product) => (
+        <Space>
+          <Link to={`/products/detail/${it.id}`}>详情</Link>
+          <a onClick={() => save(it)}>编辑</a>
+          {it.canDelete && <Confirm onConfirm={() => store.del(it.id)}>删除</Confirm>}
+        </Space>
+      ),
     },
   ]
 
   const extra = (
-    <Button type="primary" onClick={save}>
+    <Button type="primary" onClick={() => save()}>
       新增商品
     </Button>
   )
@@ -44,45 +84,35 @@ const List = observer(() => {
   return (
     <div>
       <PageHeader title="商品管理" extra={extra} />
-      <div style={{ padding: '0 24px' }}>
+      <div style={{ padding: 24, paddingTop: 0 }}>
         <Card>
           <Search
-            components={{ Input, NumberPicker }}
+            components={{ Input, Select }}
             schema={{
               name: {
-                type: 'string',
                 title: '商品名称',
-
-                'x-component': 'NumberPicker',
-              },
-              name1: {
-                type: 'string',
-                title: '商品',
-
                 'x-component': 'Input',
               },
-              name2: {
-                type: 'string',
-                title: '商品名称',
-
-                'x-component': 'Input',
+              status: {
+                title: '商品状态',
+                'x-component': 'Select',
+                enum: Product.options.status,
               },
-              name3: {
-                type: 'string',
-                title: '商品名称',
-
-                'x-component': 'Input',
+              type: {
+                title: '商品类型',
+                'x-component': 'Select',
+                enum: Product.options.type,
               },
-              // name4: {
-              //   type: 'string',
-              //   title: '商品名称',
-              //   'x-decorator': 'FormItem',
-              //   'x-component': 'Input',
-              // },
             }}
-            onSubmit={console.log}
+            onSubmit={search}
           />
-          <Table rowKey="id" loading={loading} dataSource={list} columns={columns} />
+          <Table
+            rowKey="id"
+            loading={loading}
+            dataSource={list}
+            columns={columns}
+            pagination={pagination}
+          />
         </Card>
       </div>
     </div>

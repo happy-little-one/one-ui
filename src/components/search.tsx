@@ -39,28 +39,32 @@ const Search = ({
   }
 
   const changeLayout = () => {
-    let breakpoint = 'lg'
-    if (windowWidth < 1200 && windowWidth >= 700) breakpoint = 'm'
-    if (windowWidth < 700) breakpoint = 's'
+    const breakpoint = getBreakpoint(windowWidth)
 
     const fieldKeys = Object.keys(schema)
     const fieldTotal = fieldKeys.length
     const fieldsPerRow = responsive[breakpoint]
 
-    if (expanded) {
-      acitons.setFieldState('*', state => (state.display = true))
-      setPaddingBottom(fieldTotal % fieldsPerRow === 0 ? 24 : 0)
-    } else {
-      const startHideIndex = fieldsPerRow - 1
-      const hideKeysString = fieldKeys.slice(startHideIndex).toString()
-      const visibleKeysString = fieldKeys.slice(0, startHideIndex).toString()
-      acitons.setFieldState(`*(${hideKeysString})`, state => (state.display = false))
-      acitons.setFieldState(`*(${visibleKeysString})`, state => (state.display = true))
-
+    if (fieldTotal < fieldsPerRow) {
+      setToggleVisible(false)
       setPaddingBottom(0)
-    }
+      acitons.setFieldState('*', state => (state.display = true))
+    } else {
+      if (expanded) {
+        acitons.setFieldState('*', state => (state.display = true))
+        setPaddingBottom(fieldTotal % fieldsPerRow === 0 ? 24 : 0)
+      } else {
+        const startHideIndex = fieldsPerRow - 1
+        const hideKeysString = fieldKeys.slice(startHideIndex).toString()
+        const visibleKeysString = fieldKeys.slice(0, startHideIndex).toString()
+        acitons.setFieldState(`*(${hideKeysString})`, state => (state.display = false))
+        acitons.setFieldState(`*(${visibleKeysString})`, state => (state.display = true))
 
-    setToggleVisible(fieldTotal >= fieldsPerRow)
+        setPaddingBottom(0)
+      }
+
+      setToggleVisible(fieldTotal >= fieldsPerRow)
+    }
   }
 
   useEffect(() => {
@@ -109,6 +113,12 @@ const Search = ({
       </div>
     </SchemaForm>
   )
+}
+
+const getBreakpoint = (windowWidth: number) => {
+  if (windowWidth < 1200 && windowWidth >= 700) return 'm'
+  if (windowWidth < 700) return 's'
+  return 'lg'
 }
 
 export default Search

@@ -13,7 +13,7 @@ const AppLayout: FunctionComponent<MenuProps> = ({ routes, children }) => {
         <Sider theme="light">
           <Menu routes={routes} />
         </Sider>
-        <Content>{children}</Content>
+        <Content style={{ overflow: 'auto' }}>{children}</Content>
       </Layout>
     </Layout>
   )
